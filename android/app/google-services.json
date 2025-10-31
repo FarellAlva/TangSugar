@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "234998723188",
+    "firebase_url": "https://tangsugar-24bd1-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "tangsugar-24bd1",
+    "storage_bucket": "tangsugar-24bd1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:234998723188:android:fdb564a0db9f86cfe79721",
+        "android_client_info": {
+          "package_name": "com.example.tangsugar"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCPPtVfldEshBC6MrH96RZbswMo9u70vuE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
