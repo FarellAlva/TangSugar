@@ -206,8 +206,7 @@ class _BasePageState extends ConsumerState<BasePage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => Barco
-                  
+                  builder: (context) => BarcodePage(
                     brand: brandToPass,
                     index: 0,
                   ),
