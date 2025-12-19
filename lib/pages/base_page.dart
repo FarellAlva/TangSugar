@@ -4,20 +4,23 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tangsugar/model/brands.dart';
 import 'package:tangsugar/model/products.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tangsugar/pages/barcode_page.dart';
+
 import 'package:tangsugar/pages/history_page.dart';
 import 'package:tangsugar/pages/brand_page.dart';
 import 'package:tangsugar/pages/analisis.dart';
-import 'package:tangsugar/pages/barcode_page.dart';
+import 'package:tangsugar/providers/api_provider.dart';
 
-class BasePage extends StatefulWidget {
+class BasePage extends ConsumerStatefulWidget {
   const BasePage({super.key});
 
   @override
   // ignore: library_private_types_in_public_api
-  _BasePageState createState() => _BasePageState();
+  ConsumerState<BasePage> createState() => _BasePageState();
 }
 
-class _BasePageState extends State<BasePage> {
+class _BasePageState extends ConsumerState<BasePage> {
   double _totalSugar = 0;
   bool _exceedLimit = false;
   List<String>? _imageUrls;
@@ -39,6 +42,27 @@ class _BasePageState extends State<BasePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Welcome to, TangSugar'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.cloud_download),
+            tooltip: 'Test API',
+            onPressed: () {
+              ref.refresh(fetchDataProvider.future).then((data) {
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Data: ${data['message']}')),
+                  );
+                }
+              }).catchError((error) {
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Error: $error')),
+                  );
+                }
+              });
+            },
+          ),
+        ],
       ),
       body: ListView(
         padding: const EdgeInsets.all(10),

@@ -8,6 +8,7 @@ import 'package:tangsugar/model/brands.dart';
 import 'package:tangsugar/model/products.dart';
 import 'package:tangsugar/providers/database_provider.dart';
 import 'package:tangsugar/providers/history_provider.dart';
+import 'package:ai_barcode_scanner/ai_barcode_scanner.dart';
 
 class BarcodePage extends ConsumerStatefulWidget {
   final Brands brand;
@@ -52,10 +53,47 @@ class _BarcodePageState extends ConsumerState<BarcodePage> {
             padding: const EdgeInsets.all(8.0),
             child: TextField(
               controller: _searchController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Cari... (kode barcode produk)',
-                prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(),
+                prefixIcon: const Icon(Icons.search),
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.camera_alt),
+                  onPressed: () async {
+                    // Refactored to wait for result
+                    final result = await Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) {
+                          bool hasPopped = false;
+                          return AiBarcodeScanner(
+                            scanWindow: Rect.fromCenter(
+                              center: MediaQuery.of(context)
+                                  .size
+                                  .center(Offset.zero),
+                              width: 300,
+                              height: 150,
+                            ),
+                            onScan: (String value) {
+                              debugPrint("Scanned Value: $value");
+                              if (hasPopped) return;
+                              hasPopped = true;
+                              Navigator.of(context).pop(value);
+                            },
+                            onDetect: (p0) {},
+                          );
+                        },
+                      ),
+                    );
+
+                    if (result != null && result is String) {
+                      if (!mounted) return;
+                      setState(() {
+                        _searchController.text = result;
+                        _searchText = result;
+                      });
+                    }
+                  },
+                ),
+                border: const OutlineInputBorder(),
               ),
               onChanged: (value) {
                 if (_debounce?.isActive ?? false) _debounce!.cancel();
