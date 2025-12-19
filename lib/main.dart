@@ -28,7 +28,6 @@ Future<void> main() async {
     print("TANGSUGAR: Error setting Firestore settings: $e");
   }
 
-  // Initialize Notification Service
   await NotificationService().init();
 
   runApp(const ProviderScope(child: MyApp()));

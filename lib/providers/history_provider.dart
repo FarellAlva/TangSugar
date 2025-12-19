@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tangsugar/model/products.dart';
+import 'package:tangsugar/services/notification_service.dart';
 
 // StateNotifier to manage the list of history products
 class HistoryNotifier extends StateNotifier<List<Products>> {
@@ -29,6 +30,14 @@ class HistoryNotifier extends StateNotifier<List<Products>> {
 
     // Update state
     state = [...state, product];
+
+    // Check total sugar and notify
+    if (totalSugar > 50) {
+      await NotificationService().showNotification(
+        'Peringatan Batas Gula!',
+        'Total gula Anda mencapai ${totalSugar.toStringAsFixed(1)}g. Batas harian adalah 50g!',
+      );
+    }
   }
 
   Future<void> removeFromHistory(int index) async {
