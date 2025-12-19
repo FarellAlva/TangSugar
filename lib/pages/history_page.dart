@@ -1,29 +1,22 @@
 // ignore_for_file: library_private_types_in_public_api
 
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tangsugar/model/products.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tangsugar/providers/history_provider.dart';
 
-class HistoryPage extends StatefulWidget {
+class HistoryPage extends ConsumerStatefulWidget {
   const HistoryPage({super.key});
 
   @override
-  _HistoryPageState createState() => _HistoryPageState();
+  ConsumerState<HistoryPage> createState() => _HistoryPageState();
 }
 
-class _HistoryPageState extends State<HistoryPage> {
-  List<Products> _historyList = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _getHistoryFromStorage();
-  }
-
+class _HistoryPageState extends ConsumerState<HistoryPage> {
   @override
   Widget build(BuildContext context) {
-    double totalSugar = _calculateTotalSugar();
+    final historyList = ref.watch(historyProvider);
+    final historyNotifier = ref.read(historyProvider.notifier);
+    double totalSugar = historyNotifier.totalSugar;
 
     return Scaffold(
       appBar: AppBar(
@@ -56,7 +49,7 @@ class _HistoryPageState extends State<HistoryPage> {
                 'Warning: Konsumsi gula telah melewati batas harian',
                 style: TextStyle(fontSize: 14, color: Colors.red),
               ),
-            _historyList.isEmpty
+            historyList.isEmpty
                 ? const Center(
                     child: Text(
                       'Belum ada produk dalam riwayat',
@@ -65,9 +58,9 @@ class _HistoryPageState extends State<HistoryPage> {
                   )
                 : Expanded(
                     child: ListView.builder(
-                      itemCount: _historyList.length,
+                      itemCount: historyList.length,
                       itemBuilder: (context, index) {
-                        final product = _historyList[index];
+                        final product = historyList[index];
                         double result = product.sugar / product.weight * 100;
                         String sugarIndex;
                         Color boxColor;
@@ -141,7 +134,9 @@ class _HistoryPageState extends State<HistoryPage> {
                                     IconButton(
                                       icon: const Icon(Icons.clear_outlined),
                                       onPressed: () {
-                                        _removeFromHistory(index);
+                                        ref
+                                            .read(historyProvider.notifier)
+                                            .removeFromHistory(index);
                                       },
                                     ),
                                     Container(
@@ -175,46 +170,11 @@ class _HistoryPageState extends State<HistoryPage> {
   Widget _buildDeleteButton() {
     return FloatingActionButton(
       onPressed: () {
-        _deleteAllHistory();
+        ref.read(historyProvider.notifier).clearHistory();
       },
       tooltip: 'Delete All History',
       child: const Icon(Icons.delete),
     );
-  }
-
-  double _calculateTotalSugar() {
-    double totalSugar = 0;
-    for (var product in _historyList) {
-      totalSugar += product.sugar;
-    }
-    return totalSugar;
-  }
-
-  void _getHistoryFromStorage() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String> historyJsonList = prefs.getStringList('history') ?? [];
-    List<Products> historyProducts = historyJsonList
-        .map((json) => Products.fromJson(jsonDecode(json), id: ''))
-        .toList();
-    setState(() {
-      _historyList = historyProducts;
-    });
-  }
-
-  void _removeFromHistory(int index) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String> historyJsonList = prefs.getStringList('history') ?? [];
-    historyJsonList.removeAt(index);
-    await prefs.setStringList('history', historyJsonList);
-    _getHistoryFromStorage();
-  }
-
-  void _deleteAllHistory() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.remove('history');
-    setState(() {
-      _historyList = [];
-    });
   }
 
   void _showInfoDialog(BuildContext context) {
