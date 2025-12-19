@@ -3,7 +3,7 @@
     "project_number": "234998723188",
     "firebase_url": "https://tangsugar-24bd1-default-rtdb.asia-southeast1.firebasedatabase.app",
     "project_id": "tangsugar-24bd1",
-    "storage_bucket": "tangsugar-24bd1.appspot.com"
+    "storage_bucket": "tangsugar-24bd1.firebasestorage.app"
   },
   "client": [
     {

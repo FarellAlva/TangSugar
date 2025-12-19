@@ -9,7 +9,6 @@ import 'package:tangsugar/model/products.dart';
 import 'package:tangsugar/services/database_service.dart';
 import 'dart:async';
 
-
 class BarcodePage extends StatefulWidget {
   final Brands brand;
   final DatabaseService _databaseService = DatabaseService();
@@ -78,16 +77,13 @@ class _BarcodePageState extends State<BarcodePage> {
                 } else {
                   final List<Products> brandProducts = snapshot.data ?? [];
                   if (brandProducts.isEmpty) {
-                    return const Center(
-                        child:
-                            Text('Produk tidak ada'));
+                    return const Center(child: Text('Produk tidak ada'));
                   }
 
                   final filteredProducts = brandProducts
                       .where((product) =>
-                          product.code .contains(_searchText.toLowerCase()) ||
-                          product.foodname.contains(_searchText.toLowerCase())
-                         )
+                          product.code.contains(_searchText.toLowerCase()) ||
+                          product.foodname.contains(_searchText.toLowerCase()))
                       .toList();
 
                   return ListView.builder(
@@ -118,6 +114,13 @@ class _BarcodePageState extends State<BarcodePage> {
                             width: 50,
                             height: 50,
                             fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return const SizedBox(
+                                width: 50,
+                                height: 50,
+                                child: Icon(Icons.image_not_supported),
+                              );
+                            },
                           ),
                           title: Text(
                             product.foodname,
@@ -163,7 +166,8 @@ class _BarcodePageState extends State<BarcodePage> {
                                         context: context,
                                         builder: (BuildContext context) {
                                           return AlertDialog(
-                                            title: const Text('Produk Ditambahkan'),
+                                            title: const Text(
+                                                'Produk Ditambahkan'),
                                             content: const Text(
                                                 'Produk ditambahkan ke history'),
                                             actions: <Widget>[
@@ -208,8 +212,7 @@ class _BarcodePageState extends State<BarcodePage> {
     );
   }
 
- 
-   void _addToHistory(Products product) async {
+  void _addToHistory(Products product) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     List<String> historyList = prefs.getStringList('history') ?? [];
     historyList.add(jsonEncode(product.toJson()));

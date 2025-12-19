@@ -38,7 +38,7 @@ class _BasePageState extends State<BasePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('TangSugar'),
+        title: const Text('Welcome to, TangSugar'),
       ),
       body: ListView(
         padding: const EdgeInsets.all(10),

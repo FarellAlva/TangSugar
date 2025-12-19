@@ -9,7 +9,6 @@ import 'package:tangsugar/model/products.dart';
 import 'package:tangsugar/services/database_service.dart';
 import 'dart:async';
 
-
 class DetailPage extends StatefulWidget {
   final Brands brand;
   final DatabaseService _databaseService = DatabaseService();
@@ -79,8 +78,8 @@ class _DetailPageState extends State<DetailPage> {
                   final List<Products> brandProducts = snapshot.data ?? [];
                   if (brandProducts.isEmpty) {
                     return Center(
-                        child:
-                            Text('Produk tidak ada untuk ${widget.brand.name}'));
+                        child: Text(
+                            'Produk tidak ada untuk ${widget.brand.name}'));
                   }
 
                   final filteredProducts = brandProducts
@@ -121,6 +120,13 @@ class _DetailPageState extends State<DetailPage> {
                             width: 50,
                             height: 50,
                             fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return const SizedBox(
+                                width: 50,
+                                height: 50,
+                                child: Icon(Icons.image_not_supported),
+                              );
+                            },
                           ),
                           title: Text(
                             product.foodname,
@@ -166,7 +172,8 @@ class _DetailPageState extends State<DetailPage> {
                                         context: context,
                                         builder: (BuildContext context) {
                                           return AlertDialog(
-                                            title: const Text('Produk Ditambahkan'),
+                                            title: const Text(
+                                                'Produk Ditambahkan'),
                                             content: const Text(
                                                 'Produk ditambahkan ke history'),
                                             actions: <Widget>[
@@ -212,6 +219,7 @@ class _DetailPageState extends State<DetailPage> {
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
+
   Widget _buildQuestionButton() {
     return FloatingActionButton(
       onPressed: () {
@@ -219,38 +227,39 @@ class _DetailPageState extends State<DetailPage> {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            title: const Text('Skor Indeks Gula'),
-            content: Container(
-              decoration: BoxDecoration(
-                color: Colors.blueGrey, // Atur warna latar belakang konten sesuai preferensi Anda
-                borderRadius: BorderRadius.circular(8.0),
-              ),   
-               child: Padding(
-                padding: const EdgeInsets.all(0.5),
-                child: Image.asset('lib/assets/image5.png'),
-            ),
-            ),
-            actions: <Widget>[
-              TextButton(
-                child: const Text('OK'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0),
               ),
-            ],
-          );
-        },
-      );
-    },
-    tooltip: 'Index Gula',
-    child: const Icon(Icons.question_mark_sharp),
-  );
-}
- 
-   void _addToHistory(Products product) async {
+              title: const Text('Skor Indeks Gula'),
+              content: Container(
+                decoration: BoxDecoration(
+                  color: Colors
+                      .blueGrey, // Atur warna latar belakang konten sesuai preferensi Anda
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(0.5),
+                  child: Image.asset('lib/assets/image5.png'),
+                ),
+              ),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('OK'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      },
+      tooltip: 'Index Gula',
+      child: const Icon(Icons.question_mark_sharp),
+    );
+  }
+
+  void _addToHistory(Products product) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     List<String> historyList = prefs.getStringList('history') ?? [];
     historyList.add(jsonEncode(product.toJson()));
